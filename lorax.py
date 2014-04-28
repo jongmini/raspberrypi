@@ -18,14 +18,29 @@ def ReadChannel(channel):
   print data
   return data
 
+def getserial():
+  cpuserial= "0000000000000000"
+  try:
+    f = open('/proc/cpuinfo', 'r')
+    for line in f:
+      if line[0:6]=='Serial':
+        cpuserial=line[10:26]
+    f.close()
+  except:
+    cpuserial= "ERROR000000000"
+  return cpuserial
+
+
+
 while True:
   soil0 = ReadChannel(0)
+  serial_id = getserial()
+  if serial_id == "ERROR000000000":
+    print "error"
   h = Http()		
-  data = dict(reading=soil0,user_id=4,plant_id=3)
-  resp, content = h.request("http://murmuring-crag-3099.herokuapp.com/4/3/"+str(soil0), "POST")
+  resp, content = h.request("http://murmuring-crag-3099.herokuapp.com/"+str(soil0)+"/"+serial_id+"/0", "POST")
   resp
   print resp
-  #print urlencode(data)
   time.sleep(10)
 
 
